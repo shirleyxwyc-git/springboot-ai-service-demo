@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <title>AI智能系统</title>
+
+  <!-- 🔥 載入 Markdown 解析庫 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial
+    }
+
+    body {
+      max-width: 900px;
+      margin: 20px auto;
+      background: #f5f5f5;
+      padding: 0 20px
+    }
+
+    .tab {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px
+    }
+
+    .tab button {
+      padding: 10px 20px;
+      border: none;
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .tab button.active {
+      background: #007bff;
+      color: #fff
+    }
+
+    .page {
+      display: none;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      min-height: 500px
+    }
+
+    .page.active {
+      display: block
+    }
+
+    .chat-box {
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      background: #fafafa
+    }
+
+    .msg {
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      max-width: 80%
+    }
+
+    .user {
+      background: #007bff;
+      color: #fff;
+      margin-left: auto
+    }
+
+    .ai {
+      background: #e9e9eb
+    }
+
+    .input-bar {
+      display: flex;
+      gap: 10px
+    }
+
+    input,
+    textarea {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      white-space: pre-wrap
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="tab">
+    <button class="tab-btn active" data-page="chat">AI聊天</button>
+    <button class="tab-btn" data-page="audit">内容审核</button>
+    <button class="tab-btn" data-page="data">数据分析</button>
+    <button class="tab-btn" data-page="knowledge">私有知识库</button>
+  </div>
+
+  <div class="page active" id="chat">
+    <div class="chat-box" id="chatBox"></div>
+    <div class="input-bar">
+      <input id="question" placeholder="输入问题...">
+      <button onclick="sendChat()">发送</button>
+    </div>
+  </div>
+
+  <div class="page" id="audit">
+    <textarea id="content" rows="6" placeholder="输入要审核的内容"></textarea>
+    <button onclick="doAudit()" style="margin-top:10px">开始审核</button>
+    <div class="result" id="auditResult"></div>
+  </div>
+
+  <div class="page" id="data">
+    <textarea id="data" rows="4" placeholder="数据示例：1月销量100，2月200，3月350"></textarea>
+    <input id="dataQuestion" placeholder="你想分析什么？">
+    <button onclick="doAnalyze()" style="margin-top:10px">开始分析</button>
+    <div class="result" id="dataResult"></div>
+  </div>
+
+  <div class="page" id="knowledge">
+    <textarea id="knowledge" rows="6" placeholder="放入产品文档、规则、资料"></textarea>
+    <input id="kQuestion" placeholder="输入问题">
+    <button onclick="askKnowledge()" style="margin-top:10px">查询答案</button>
+    <div class="result" id="kResult"></div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+        btn.classList.add('active')
+        document.getElementById(btn.dataset.page).classList.add('active')
+      }
+    })
+
+    let fullText = ""; // 🔥 用來儲存完整AI回覆
+
+    function sendChat() {
+      const q = document.getElementById('question').value.trim()
+      if (!q) return
+      const box = document.getElementById('chatBox')
+      box.innerHTML += `<div class="msg user">${q}</div>`
+      document.getElementById('question').value = ''
+      const ai = document.createElement('div')
+      ai.className = 'msg ai'
+      box.appendChild(ai)
+      box.scrollTop = box.scrollHeight
+
+      fullText = ""; // 重製
+
+      const es = new EventSource('/ai/stream?question=' + encodeURIComponent(q))
+
+      es.onmessage = e => {
+        fullText += e.data;
+
+        // 🔥 關鍵：渲染 Markdown
+        ai.innerHTML = marked.parse(fullText);
+        box.scrollTop = box.scrollHeight
+      }
+      es.onerror = () => es.close()
+    }
+
+    async function doAudit() {
+      const r = await fetch('/ai/audit?content=' + encodeURIComponent(document.getElementById('content').value))
+      document.getElementById('auditResult').innerText = await r.text()
+    }
+
+    async function doAnalyze() {
+      const data = encodeURIComponent(document.getElementById('data').value)
+      const q = encodeURIComponent(document.getElementById('dataQuestion').value)
+      const r = await fetch('/ai/analyze?data=' + data + '&question=' + q)
+      document.getElementById('dataResult').innerText = await r.text()
+    }
+
+    async function askKnowledge() {
+      const k = encodeURIComponent(document.getElementById('knowledge').value)
+      const q = encodeURIComponent(document.getElementById('kQuestion').value)
+      const r = await fetch('/ai/knowledge?knowledge=' + k + '&question=' + q)
+      document.getElementById('kResult').innerText = await r.text()
+    }
+  </script>
+</body>
+
+</html>

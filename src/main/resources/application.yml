@@ -1,0 +1,12 @@
+server:
+  port: 8188
+
+spring:
+  application:
+    name: ai-java-demo
+
+ai:
+  model:
+    api-key: ${AI_API_KEY}. # 從環境變量讀取
+    url: ${AI_API_URL}
+    
