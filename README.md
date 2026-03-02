@@ -1,5 +1,6 @@
 # AI Chat System
 A lightweight, production-ready AI chat application built with **Spring Boot**, **SSE streaming**, and **Markdown-supported frontend UI**.
+
 **AI Chat：**
 <img width="2716" height="1504" alt="image" src="https://github.com/user-attachments/assets/81787859-b0e7-4001-85bd-f5696a0bcc91" />
 
