@@ -1,11 +1,17 @@
 # AI Chat System
 A lightweight, production-ready AI chat application built with **Spring Boot**, **SSE streaming**, and **Markdown-supported frontend UI**.
+**AI Chat：**
 <img width="2716" height="1504" alt="image" src="https://github.com/user-attachments/assets/81787859-b0e7-4001-85bd-f5696a0bcc91" />
 
+**Private Knowledge Base Q&A**
+<img width="3010" height="2202" alt="image" src="https://github.com/user-attachments/assets/93a28c78-660d-4b02-b095-b1e0a62da09e" />
 
 ## Features
 - AI chat with real-time **SSE streaming (typewriter effect)**
 - Full **Markdown rendering** (headings, bold, lists, paragraphs, code)
+- - TWO integrated AI modules:
+  - AI Chat
+  - Private Knowledge Base Q&A
 
 - Clean, responsive web UI
 - Works smoothly in **Hong Kong / international environments**
