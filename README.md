@@ -10,10 +10,10 @@ A lightweight, production-ready AI chat application built with **Spring Boot**, 
 ## Features
 - AI chat with real-time **SSE streaming (typewriter effect)**
 - Full **Markdown rendering** (headings, bold, lists, paragraphs, code)
-- - TWO integrated AI modules:
+- **TWO integrated AI modules:**
   - AI Chat
   - Private Knowledge Base Q&A
-
+- **Private Knowledge Base supports file upload & text extraction** (PDF, DOCX, TXT)
 - Clean, responsive web UI
 - Works smoothly in **Hong Kong / international environments**
 
@@ -27,9 +27,12 @@ A lightweight, production-ready AI chat application built with **Spring Boot**, 
 ![Markdown](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white)
 ![OkHttp](https://img.shields.io/badge/OkHttp-2E8B57?style=for-the-badge)
 ![SSE](https://img.shields.io/badge/SSE-Streaming-FF6347?style=for-the-badge)
+
 - Backend: Spring Boot 3.x
 - AI Model: DeepSeek
 - Streaming: Server-Sent Events (SSE)
 - Frontend: Vanilla HTML / CSS / JavaScript
 - Markdown Render: `marked.js`
 - HTTP Client: OkHttp
+- **File Upload**: Spring Boot Multipart (POST)
+- **Text Extraction**: Apache PDFBox, Apache POI (PDF/DOCX/TXT)
